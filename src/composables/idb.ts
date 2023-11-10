@@ -82,6 +82,7 @@ export function useIndexedDB(dbname: string, version: number) {
         cursorRequest.onsuccess = () => {
           const cursor = cursorRequest.result
           if (cursor) {
+            
             if (cb(cursor?.value, index)) {
               result.push(cursor.value)
             }
@@ -97,15 +98,18 @@ export function useIndexedDB(dbname: string, version: number) {
     })
   }
 
-  const get = <T>(storeName: string, value: any, key?: string) => {
+  /**
+   * get data by pk or by index key
+   */
+  const get = <T>(storeName: string, value: any, indexKey?: string) => {
     const openRequest = window.indexedDB.open(dbname, version)
     
     return new Promise<IDBRequest>((resolve, reject) => {
       openRequest.onsuccess = () => {
         beginTransaction(openRequest, storeName, (store) => {
-          const result: IDBRequest<T> = key === undefined ? store.get(value) : store.index(key).get(value)
-          result.onsuccess = () => resolve(result)
-          result.onerror = () => reject(result)
+          const resultRequest: IDBRequest = indexKey === undefined ? store.get(value) : store.index(indexKey).get(value)
+          resultRequest.onsuccess = () => resolve(resultRequest)
+          resultRequest.onerror = () => reject(resultRequest)
         })
       }
     })

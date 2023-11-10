@@ -11,13 +11,14 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "gen:type": "supabase gen types typescript --project-id srwbrauyocsuegyirrrp > database.types.ts"
+    "gen:type": "supabase gen types typescript --project-id srwbrauyocsuegyirrrp > src/database.types.ts"
   },
   "dependencies": {
     "@iconify/vue": "^4.1.1",
     "@supabase/supabase-js": "^2.38.4",
     "@vueuse/core": "^10.5.0",
     "pinia": "^2.1.7",
+    "tailwind-merge": "^2.0.0",
     "vue": "^3.3.4",
     "vue-i18n": "^9.6.1",
     "vue-router": "^4.2.5"

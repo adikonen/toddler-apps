@@ -7,8 +7,9 @@ export const animalSwipeRoutes: Readonly<RouteRecordRaw[]> = [
     component: () => import('@/domain/animal-swipe/views/IndexView.vue')
   },
   {
-    path: '/animal-swipe/:category_id/show/:id',
+    path: '/animal-swipe/:category_id/show',
     name: 'animal-swipe.show',
-    component: () => import('@/domain/animal-swipe/views/ShowView.vue')
+    props: true,
+    component: () => import('@/domain/animal-swipe/views/ShowView.vue'),
   }
 ]

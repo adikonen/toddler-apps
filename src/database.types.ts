@@ -1,33 +1,53 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export interface Database {
   public: {
     Tables: {
-      dictionary: {
+      dictionaries: {
         Row: {
           created_at: string
           dictionary_category_id: number
           id: number
           image: string
+          sound: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           dictionary_category_id: number
           id?: number
           image: string
+          sound?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           dictionary_category_id?: number
           id?: number
           image?: string
+          sound?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'dictionary_dictionary_category_id_fkey'
-            columns: ['dictionary_category_id']
-            referencedRelation: 'dictionary_categories'
-            referencedColumns: ['id']
+            foreignKeyName: "dictionaries_dictionary_category_id_fkey"
+            columns: ["dictionary_category_id"]
+            isOneToOne: false
+            referencedRelation: "dictionary_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dictionaries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           }
         ]
       }
@@ -36,19 +56,19 @@ export interface Database {
           created_at: string
           id: number
           image: string
-          type: string
+          type: string | null
         }
         Insert: {
           created_at?: string
           id?: number
           image: string
-          type: string
+          type?: string | null
         }
         Update: {
           created_at?: string
           id?: number
           image?: string
-          type: string
+          type?: string | null
         }
         Relationships: []
       }
@@ -76,16 +96,18 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'dictionary_category_details_dictionary_category_id_fkey'
-            columns: ['dictionary_category_id']
-            referencedRelation: 'dictionary_categories'
-            referencedColumns: ['id']
+            foreignKeyName: "dictionary_category_details_dictionary_category_id_fkey"
+            columns: ["dictionary_category_id"]
+            isOneToOne: false
+            referencedRelation: "dictionary_categories"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'dictionary_category_details_locale_code_fkey'
-            columns: ['locale_code']
-            referencedRelation: 'locales'
-            referencedColumns: ['code']
+            foreignKeyName: "dictionary_category_details_locale_code_fkey"
+            columns: ["locale_code"]
+            isOneToOne: false
+            referencedRelation: "locales"
+            referencedColumns: ["code"]
           }
         ]
       }
@@ -116,16 +138,18 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'dictionary_details_dictionary_id_fkey'
-            columns: ['dictionary_id']
-            referencedRelation: 'dictionary'
-            referencedColumns: ['id']
+            foreignKeyName: "dictionary_details_dictionary_id_fkey"
+            columns: ["dictionary_id"]
+            isOneToOne: false
+            referencedRelation: "dictionaries"
+            referencedColumns: ["id"]
           },
           {
-            foreignKeyName: 'dictionary_details_locale_code_fkey'
-            columns: ['locale_code']
-            referencedRelation: 'locales'
-            referencedColumns: ['code']
+            foreignKeyName: "dictionary_details_locale_code_fkey"
+            columns: ["locale_code"]
+            isOneToOne: false
+            referencedRelation: "locales"
+            referencedColumns: ["code"]
           }
         ]
       }
@@ -133,35 +157,20 @@ export interface Database {
         Row: {
           code: string
           created_at: string
+          image: string
           name: string
         }
         Insert: {
           code: string
           created_at?: string
+          image: string
           name: string
         }
         Update: {
           code?: string
           created_at?: string
+          image?: string
           name?: string
-        }
-        Relationships: []
-      }
-      version: {
-        Row: {
-          created_at: string
-          id: number
-          version: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          version?: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          version?: number
         }
         Relationships: []
       }
