@@ -10,6 +10,6 @@ export const animalSwipeRoutes: Readonly<RouteRecordRaw[]> = [
     path: '/animal-swipe/:category_id/show',
     name: 'animal-swipe.show',
     props: true,
-    component: () => import('@/domain/animal-swipe/views/ShowView.vue'),
+    component: () => import('@/domain/animal-swipe/views/ShowView.vue')
   }
 ]

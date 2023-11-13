@@ -9,7 +9,7 @@ createSchema()
 const network = useNetwork()
 
 if (network.isOnline.value) {
-  localeService.load()
-  dictionaryCategoryService.load()
+  localeService.sync()
+  dictionaryCategoryService.sync()
   dictionaryService.load()
 }

@@ -1,8 +1,8 @@
-import { useLocaleStore } from "@/stores/locale"
-import { useSpeechSynthesis } from "@vueuse/core/index.cjs"
-import { ref, watch } from "vue"
+import { useLocaleStore } from '@/stores/locale'
+import { useSpeechSynthesis } from '@vueuse/core/index.cjs'
+import { ref, watch } from 'vue'
 
-export function useVoice (vpitch = 1, vrate = 1) {
+export function useVoice(vpitch = 1, vrate = 1) {
   const localeStore = useLocaleStore()
 
   const voice = ref<SpeechSynthesisVoice>(undefined as unknown as SpeechSynthesisVoice)
@@ -14,7 +14,7 @@ export function useVoice (vpitch = 1, vrate = 1) {
   const speech = useSpeechSynthesis(text, {
     voice,
     pitch,
-    rate,
+    rate
   })
 
   const voices = ref<SpeechSynthesisVoice[]>([])
@@ -36,7 +36,7 @@ export function useVoice (vpitch = 1, vrate = 1) {
 
   const speak = (txt?: string, delay = 1) => {
     text.value = txt || ''
-    setTimeout(speech.speak, delay);
+    setTimeout(speech.speak, delay)
   }
 
   const stop = () => {

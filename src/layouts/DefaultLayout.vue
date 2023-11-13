@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import TheNavbar from '@/components/TheNavbar.vue';
-import { useForceLandscape } from '@/composables/screen';
+import TheNavbar from '@/components/TheNavbar.vue'
+import { useForceLandscape } from '@/composables/screen'
 interface DefaultLayout {
   forceLandscape?: boolean
 }
 
 const forceClass = useForceLandscape()
 
-const props = defineProps<DefaultLayout>()
+defineProps<DefaultLayout>()
 </script>
 <template>
   <div :class="[forceLandscape ? forceClass : '']">

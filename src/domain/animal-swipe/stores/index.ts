@@ -1,18 +1,18 @@
-import { useVoice } from "@/composables/voice";
-import { type DictionaryCategory, dictionaryCategoryService } from "@/services/dictionary-category.service";
-import { dictionaryService, type Dictionary } from "@/services/dictionary.service";
-import { useLocaleStore } from "@/stores/locale";
-import { defineStore } from "pinia";
+import {
+  type DictionaryCategory,
+  dictionaryCategoryService
+} from '@/services/dictionary-category.service'
+import { dictionaryService, type Dictionary } from '@/services/dictionary.service'
+import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useMainStore = defineStore('animal-swipe', () => {
-  const categories = ref<DictionaryCategory[]>([]);
+  const categories = ref<DictionaryCategory[]>([])
   const animals = ref<Dictionary[]>([])
   const activeAnimalIndex = ref(0)
 
   const fillCategories = async () => {
-    categories.value  = await dictionaryCategoryService.filter((item) => item.type === 'ANIMAL')
-    console.log(categories.value)
+    categories.value = await dictionaryCategoryService.filter((item) => item.type === 'ANIMAL')
   }
 
   const fillAnimals = async (category_id: number) => {

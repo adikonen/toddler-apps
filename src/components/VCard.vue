@@ -8,7 +8,7 @@ defineProps(['header'])
       {{ header }}
     </div>
 
-      <slot />
+    <slot />
 
     <div class="mt-3">
       <slot name="footer"></slot>

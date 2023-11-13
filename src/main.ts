@@ -17,7 +17,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-
 app.component('VCard', VCard)
 app.component('VIcon', Icon)
 app.component('DefaultLayout', DefaultLayoutVue)

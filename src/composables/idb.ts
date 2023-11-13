@@ -3,64 +3,70 @@ export type FilterCb = <T>(item: T, index?: number) => boolean
 
 export function useIndexedDB(dbname: string, version: number) {
   function beginTransaction(
-    openRequest: IDBOpenDBRequest, 
-    storeName: string, 
-    fn: (store: IDBObjectStore) => void, 
+    openRequest: IDBOpenDBRequest,
+    storeName: string,
+    fn: (store: IDBObjectStore) => void,
     mode?: IDBTransactionMode
   ) {
     const db = openRequest.result
     const transaction = db.transaction(storeName, mode)
     const store = transaction.objectStore(storeName)
-    
+
     fn(store)
 
     transaction.oncomplete = () => db.close()
-  } 
-  
-  const add = <T>(
-    storeName: string,
-    payload: T,
-  ): Promise<IDBRequest> => {
-    const openRequest = window.indexedDB.open(dbname, version)
-    
-    return new Promise<IDBRequest<IDBValidKey>>((resolve, reject) => {
-      openRequest.onsuccess = () => {
-        beginTransaction(openRequest, storeName, (store) => {
-          const result = store.add(payload)
-          result.onsuccess = () => resolve(result)
-          result.onerror = () => reject(result)
-        }, 'readwrite')
-      }
-    })
-
   }
 
- const put = <T>(
-    storeName: string,
-    payload: T,
-  ): Promise<IDBRequest> => {
+  const add = <T>(storeName: string, payload: T): Promise<IDBRequest> => {
     const openRequest = window.indexedDB.open(dbname, version)
-    
-    return new Promise<IDBRequest>((resolve, reject) => {
+
+    return new Promise<IDBRequest<IDBValidKey>>((resolve, reject) => {
       openRequest.onsuccess = () => {
-        beginTransaction(openRequest, storeName, (store) => {
-          const result = store.put(payload)
-          result.onsuccess = () => resolve(result)
-          result.onerror = () => reject(result)
-        }, 'readwrite')
+        beginTransaction(
+          openRequest,
+          storeName,
+          (store) => {
+            const result = store.add(payload)
+            result.onsuccess = () => resolve(result)
+            result.onerror = () => reject(result)
+          },
+          'readwrite'
+        )
       }
     })
-    
+  }
+
+  const put = <T>(storeName: string, payload: T): Promise<IDBRequest> => {
+    const openRequest = window.indexedDB.open(dbname, version)
+
+    return new Promise<IDBRequest>((resolve, reject) => {
+      openRequest.onsuccess = () => {
+        beginTransaction(
+          openRequest,
+          storeName,
+          (store) => {
+            try {
+              const result = store.put(payload)
+              result.onsuccess = () => resolve(result)
+              result.onerror = () => reject(result)
+            } catch (err) {
+              console.log(payload, err)
+            }
+          },
+          'readwrite'
+        )
+      }
+    })
   }
 
   const all = <T>(storeName: string) => {
     const openRequest = window.indexedDB.open(dbname, version)
-    
-    return new Promise<IDBRequest>((resolve, reject) => {
+
+    return new Promise<T[]>((resolve, reject) => {
       openRequest.onsuccess = () => {
         beginTransaction(openRequest, storeName, (store) => {
-          const result: IDBRequest<T[]> = store.getAll()
-          result.onsuccess = () => resolve(result)
+          const result = store.getAll()
+          result.onsuccess = () => resolve(result.result)
           result.onerror = () => reject(result)
         })
       }
@@ -77,12 +83,11 @@ export function useIndexedDB(dbname: string, version: number) {
         const store = transaction.objectStore(storeName)
         const cursorRequest = store.openCursor()
         const result: T[] = []
-        let index = 0;
+        let index = 0
 
         cursorRequest.onsuccess = () => {
           const cursor = cursorRequest.result
           if (cursor) {
-            
             if (cb(cursor?.value, index)) {
               result.push(cursor.value)
             }
@@ -103,14 +108,34 @@ export function useIndexedDB(dbname: string, version: number) {
    */
   const get = <T>(storeName: string, value: any, indexKey?: string) => {
     const openRequest = window.indexedDB.open(dbname, version)
-    
-    return new Promise<IDBRequest>((resolve, reject) => {
+
+    return new Promise<T>((resolve, reject) => {
       openRequest.onsuccess = () => {
         beginTransaction(openRequest, storeName, (store) => {
-          const resultRequest: IDBRequest = indexKey === undefined ? store.get(value) : store.index(indexKey).get(value)
-          resultRequest.onsuccess = () => resolve(resultRequest)
+          const resultRequest =
+            indexKey === undefined ? store.get(value) : store.index(indexKey).get(value)
+          resultRequest.onsuccess = () => resolve(resultRequest.result)
           resultRequest.onerror = () => reject(resultRequest)
         })
+      }
+    })
+  }
+
+  const clear = (storeName: string) => {
+    const openRequest = window.indexedDB.open(dbname, version)
+
+    return new Promise<any>((resolve, reject) => {
+      openRequest.onsuccess = () => {
+        beginTransaction(
+          openRequest,
+          storeName,
+          (store) => {
+            const resultRequest = store.clear()
+            resultRequest.onsuccess = () => resolve(undefined)
+            resultRequest.onerror = () => reject(resultRequest)
+          },
+          'readwrite'
+        )
       }
     })
   }
@@ -120,6 +145,7 @@ export function useIndexedDB(dbname: string, version: number) {
     put,
     all,
     filter,
-    get
+    get,
+    clear
   }
 }

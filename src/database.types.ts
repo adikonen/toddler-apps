@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export interface Database {
   public: {
@@ -36,18 +30,18 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "dictionaries_dictionary_category_id_fkey"
-            columns: ["dictionary_category_id"]
+            foreignKeyName: 'dictionaries_dictionary_category_id_fkey'
+            columns: ['dictionary_category_id']
             isOneToOne: false
-            referencedRelation: "dictionary_categories"
-            referencedColumns: ["id"]
+            referencedRelation: 'dictionary_categories'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "dictionaries_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'dictionaries_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: 'users'
+            referencedColumns: ['id']
           }
         ]
       }
@@ -96,18 +90,18 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "dictionary_category_details_dictionary_category_id_fkey"
-            columns: ["dictionary_category_id"]
+            foreignKeyName: 'dictionary_category_details_dictionary_category_id_fkey'
+            columns: ['dictionary_category_id']
             isOneToOne: false
-            referencedRelation: "dictionary_categories"
-            referencedColumns: ["id"]
+            referencedRelation: 'dictionary_categories'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "dictionary_category_details_locale_code_fkey"
-            columns: ["locale_code"]
+            foreignKeyName: 'dictionary_category_details_locale_code_fkey'
+            columns: ['locale_code']
             isOneToOne: false
-            referencedRelation: "locales"
-            referencedColumns: ["code"]
+            referencedRelation: 'locales'
+            referencedColumns: ['code']
           }
         ]
       }
@@ -138,18 +132,18 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "dictionary_details_dictionary_id_fkey"
-            columns: ["dictionary_id"]
+            foreignKeyName: 'dictionary_details_dictionary_id_fkey'
+            columns: ['dictionary_id']
             isOneToOne: false
-            referencedRelation: "dictionaries"
-            referencedColumns: ["id"]
+            referencedRelation: 'dictionaries'
+            referencedColumns: ['id']
           },
           {
-            foreignKeyName: "dictionary_details_locale_code_fkey"
-            columns: ["locale_code"]
+            foreignKeyName: 'dictionary_details_locale_code_fkey'
+            columns: ['locale_code']
             isOneToOne: false
-            referencedRelation: "locales"
-            referencedColumns: ["code"]
+            referencedRelation: 'locales'
+            referencedColumns: ['code']
           }
         ]
       }

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { animalSwipeRoutes } from '@/domain/animal-swipe/routes'
+import { dictionaryRoutes } from '@/domain/dictionary/routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,7 +10,8 @@ const router = createRouter({
       name: 'home',
       component: () => import('@/views/HomeView.vue')
     },
-    ...animalSwipeRoutes
+    ...animalSwipeRoutes,
+    ...dictionaryRoutes
   ]
 })
 

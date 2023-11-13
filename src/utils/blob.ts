@@ -4,14 +4,13 @@ export class BlobUtil {
 
     const response = await fetch(url)
     const blob = await response.blob()
-    
+
     return blob
   }
 
   printBlob(src?: string, blob?: Blob) {
     return blob == undefined ? src : URL.createObjectURL(blob)
   }
-
 }
 
-export const ublob = new BlobUtil
+export const blobUtil = new BlobUtil()
