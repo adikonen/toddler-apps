@@ -7,7 +7,7 @@ export const dictionaryRoutes: Readonly<RouteRecordRaw[]> = [
     component: () => import('@/domain/dictionary/views/IndexView.vue')
   },
   {
-    path: '/dictionary/:category_id/show',
+    path: '/dictionary/:category_type/show',
     name: 'dictionary.show',
     props: true,
     component: () => import('@/domain/dictionary/views/ShowView.vue')

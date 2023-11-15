@@ -57,6 +57,7 @@ onBeforeUnmount(() => {
   voice.stop()
 })
 
+// if locale changed, refill data from idb
 watch(
   () => localeStore.activeLocaleCode,
   () => {
@@ -90,12 +91,12 @@ watch(
         <VIcon icon="mdi:arrow-left-bold-circle" width="30" class="drop-shadow"></VIcon>
         <p class="text-lg">Back</p>
       </RouterLink>
-      <ul class="bg-amber-700 p-3 rounded-bl-md flex gap-4">
-        <li class="rounded-full p-1 bg-amber-600">
+      <ul class="bg-gray-700 p-3 rounded-bl-md flex gap-4 shadow">
+        <li class="rounded-full p-1 bg-gray-600">
           <VIcon icon="heroicons:speaker-wave-solid"></VIcon>
         </li>
         <li
-          class="rounded-full p-1 bg-amber-600 flex items-center"
+          class="rounded-full p-1 bg-gray-600 flex items-center"
           @click="localeStore.setNextLocale"
         >
           <img width="20" :src="localeStore.activeLocale?.image" alt="" />

@@ -2,7 +2,7 @@
 import TheNavbar from '@/components/TheNavbar.vue'
 import { useForceLandscape } from '@/composables/screen'
 interface DefaultLayout {
-  forceLandscape?: boolean
+  forceLandscape?: Boolean
 }
 
 const forceClass = useForceLandscape()

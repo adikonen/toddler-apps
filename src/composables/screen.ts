@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 
 /**
- * use it as class
+ * bind it to CLASS, 
  */
 export function useForceLandscape() {
   return computed(

@@ -15,7 +15,7 @@ watch(() => localeStore.activeLocaleCode, store.fillCategories)
 <template>
   <DefaultLayout>
     <h1 class="text-2xl text-center mb-4 font-bold font-poppins mt-2">Select Categories</h1>
-    <div class="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 place-content-center">
+    <div class="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 place-content-center mx-3">
       <template v-for="item in store.categories" :key="item.id">
         <RouterLink :to="{ name: 'animal-swipe.show', params: { category_id: item.id } }">
           <VCard>

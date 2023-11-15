@@ -4,7 +4,7 @@ import {
 } from '@/services/dictionary-category.service'
 import { dictionaryService, type Dictionary } from '@/services/dictionary.service'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export type DictionaryData = {
   alphabet: string
@@ -13,7 +13,7 @@ export type DictionaryData = {
 
 export const useMainStore = defineStore('dictionary', () => {
   const categories = ref<DictionaryCategory[]>([])
-  const dictionariesData = ref<DictionaryData[]>([])
+  const dictionaryData = ref<DictionaryData[]>([])
 
   // index for array dictionary data
   const activeIndex = ref(0)
@@ -21,11 +21,37 @@ export const useMainStore = defineStore('dictionary', () => {
 
   const fillCategories = async () => {
     const result = await dictionaryCategoryService.getAll()
-    categories.value = result
+    const ctypes: string[] = []
+
+    const data = result.filter((item) => {
+      const index = ctypes.findIndex((type) => type == item.type)
+      if (index !== -1) {
+        return false
+      }
+      ctypes.push(item.type)
+      return true
+    }).map((item) => {
+      return {
+        ...item,
+        name: item.type.toLowerCase()
+      }
+    })
+
+    categories.value = data
   }
 
-  const fillDictionariesData = async () => {
-    const result = await dictionaryService.getAll()
+  const fillDictionaryData = async (type: string) => {
+    const categoryData = await dictionaryCategoryService.filter((c) => {
+      return type.toLowerCase() === c.type.toLowerCase()
+    })
+
+    const categoryIds = categoryData.map((c) => c.id)
+
+    const result = await dictionaryService.filter((d) => {
+      // where dictionary.dictionary_category_id in categoryIds 
+      return categoryIds.includes(d.dictionary_category_id)
+    })
+
     const data: DictionaryData[] = []
 
     result.forEach((item) => {
@@ -43,30 +69,16 @@ export const useMainStore = defineStore('dictionary', () => {
       }
     })
 
-    dictionariesData.value = data
-  }
+    dictionaryData.value = data.sort((a, b) => {
+      return a.alphabet.localeCompare(b.alphabet)
+    })
 
-  const setIndexToNext = () => {
-    let nextIndex = activeIndex.value + 1
-    if (nextIndex >= dictionariesData.value.length) {
-      nextIndex = 0
-    }
-
-    activeIndex.value = nextIndex
-  }
-
-  const setIndexToPrev = () => {
-    let nextIndex = activeIndex.value - 1
-    if (nextIndex < 0) {
-      nextIndex = dictionariesData.value.length - 1
-    }
-
-    activeIndex.value = nextIndex
+    console.log(dictionaryData)
   }
 
   const setDictionaryIndexToNext = () => {
     let nextIndex = activeDictionaryIndex.value + 1
-    if (nextIndex >= dictionariesData.value[activeDictionaryIndex.value].dictionaries.length) {
+    if (nextIndex >= dictionaryData.value[activeIndex.value].dictionaries.length) {
       nextIndex = 0
     }
 
@@ -76,22 +88,40 @@ export const useMainStore = defineStore('dictionary', () => {
   const setDictionaryIndexToPrev = () => {
     let nextIndex = activeDictionaryIndex.value - 1
     if (nextIndex < 0) {
-      nextIndex = dictionariesData.value[activeDictionaryIndex.value].dictionaries.length - 1
+      nextIndex = dictionaryData.value[activeDictionaryIndex.value].dictionaries.length - 1
     }
 
     activeDictionaryIndex.value = nextIndex
   }
 
+  const setActiveIndex = (index: number) => {
+    activeDictionaryIndex.value = 0
+    activeIndex.value = index
+  }
+
+  const resetIndex = () => {
+    activeDictionaryIndex.value = 0
+    activeIndex.value = 0    
+  }
+
+  const alphabets = computed(() => dictionaryData.value.map((d) => d.alphabet))
+
+  const activeDictionary = computed(() => {
+    return dictionaryData.value[activeIndex.value]?.dictionaries[activeDictionaryIndex.value]
+  })
+
   return {
     categories,
-    dictionariesData,
+    dictionaryData,
     activeDictionaryIndex,
     activeIndex,
-    setIndexToNext,
     setDictionaryIndexToPrev,
-    setIndexToPrev,
     setDictionaryIndexToNext,
     fillCategories,
-    fillDictionariesData
+    fillDictionaryData,
+    setActiveIndex,
+    resetIndex,
+    alphabets,
+    activeDictionary
   }
 })

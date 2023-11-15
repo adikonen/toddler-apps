@@ -41,7 +41,6 @@ export function useVoice(vpitch = 1, vrate = 1) {
 
   const stop = () => {
     speech.stop()
-    console.log('ok')
   }
 
   watch(() => localeStore.activeLocaleCode, fillVoice)

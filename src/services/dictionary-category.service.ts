@@ -41,6 +41,7 @@ class DictionaryCategoryService extends BaseService implements MultiLocales {
                 ...detail,
                 id: item.id,
                 image: item.image,
+                type: item.type,
                 detail_id: detail.id,
                 image_blob: await imageBlobPromise
               }

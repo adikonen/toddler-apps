@@ -1,13 +1,13 @@
 <script setup lang="ts">
-defineProps(['header'])
+import { twMerge } from 'tailwind-merge';
+defineOptions({
+  inheritAttrs: false
+})
+
 </script>
 
 <template>
-  <div class="bg-white rounded p-3 shadow">
-    <div v-if="header" class="border-b border-b-black mb-3">
-      {{ header }}
-    </div>
-
+  <div :class="twMerge(' rounded p-2 shadow')" v-bind="$attrs">
     <slot />
 
     <div class="mt-3">
