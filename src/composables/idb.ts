@@ -1,4 +1,3 @@
-export type CompareOperator = '=' | '<' | '>' | '!=' | '<=' | '>='
 export type FilterCb = <T>(item: T, index?: number) => boolean
 
 export function useIndexedDB(dbname: string, version: number) {

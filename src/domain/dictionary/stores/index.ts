@@ -23,19 +23,21 @@ export const useMainStore = defineStore('dictionary', () => {
     const result = await dictionaryCategoryService.getAll()
     const ctypes: string[] = []
 
-    const data = result.filter((item) => {
-      const index = ctypes.findIndex((type) => type == item.type)
-      if (index !== -1) {
-        return false
-      }
-      ctypes.push(item.type)
-      return true
-    }).map((item) => {
-      return {
-        ...item,
-        name: item.type.toLowerCase()
-      }
-    })
+    const data = result
+      .filter((item) => {
+        const index = ctypes.findIndex((type) => type == item.type)
+        if (index !== -1) {
+          return false
+        }
+        ctypes.push(item.type)
+        return true
+      })
+      .map((item) => {
+        return {
+          ...item,
+          name: item.type.toLowerCase()
+        }
+      })
 
     categories.value = data
   }
@@ -48,7 +50,7 @@ export const useMainStore = defineStore('dictionary', () => {
     const categoryIds = categoryData.map((c) => c.id)
 
     const result = await dictionaryService.filter((d) => {
-      // where dictionary.dictionary_category_id in categoryIds 
+      // where dictionary.dictionary_category_id in categoryIds
       return categoryIds.includes(d.dictionary_category_id)
     })
 
@@ -101,7 +103,7 @@ export const useMainStore = defineStore('dictionary', () => {
 
   const resetIndex = () => {
     activeDictionaryIndex.value = 0
-    activeIndex.value = 0    
+    activeIndex.value = 0
   }
 
   const alphabets = computed(() => dictionaryData.value.map((d) => d.alphabet))

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge'
 defineOptions({
   inheritAttrs: false
 })
-
 </script>
 
 <template>

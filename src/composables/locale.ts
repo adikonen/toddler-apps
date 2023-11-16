@@ -1,10 +1,10 @@
-import { useLocaleStore } from "@/stores/locale"
-import { computed } from "vue"
+import { useLocaleStore } from '@/stores/locale'
+import { computed } from 'vue'
 
 /**
  * the column named 'type' of table dictionary category will always use en locale
  */
-export const useTranslateDictionaryCategoryType = function(text: string) {  
+export const useTranslateDictionaryCategoryType = function (text: string) {
   const localeStore = useLocaleStore()
   const en = ['animal', 'family']
   const id = ['hewan', 'keluarga']

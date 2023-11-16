@@ -92,7 +92,7 @@ watch(
         <p class="text-lg">Back</p>
       </RouterLink>
       <ul class="bg-gray-700 p-3 rounded-bl-md flex gap-4 shadow">
-        <li class="rounded-full p-1 bg-gray-600">
+        <li class="rounded-full p-1 bg-gray-600" @click="voice.speak(store.animal?.name)">
           <VIcon icon="heroicons:speaker-wave-solid"></VIcon>
         </li>
         <li

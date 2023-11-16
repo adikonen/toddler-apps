@@ -1,7 +1,7 @@
-import { useLocaleStore } from "@/stores/locale";
-import { createPinia, setActivePinia } from "pinia";
-import { describe, test, beforeAll, expect } from "vitest";
-import { useTranslateDictionaryCategoryType } from "../locale";
+import { useLocaleStore } from '@/stores/locale'
+import { createPinia, setActivePinia } from 'pinia'
+import { describe, test, beforeAll, expect } from 'vitest'
+import { useTranslateDictionaryCategoryType } from '../locale'
 
 beforeAll(() => {
   setActivePinia(createPinia())
@@ -31,6 +31,5 @@ describe('locale composables test', () => {
     localeStore.activeLocaleCode = 'id-ID'
     expect(d1.value).toBe('hewan')
     expect(d2.value).toBe('keluarga')
-
   })
 })

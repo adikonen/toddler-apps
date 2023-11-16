@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useMainStore } from '../stores';
-import { imageUtil } from '@/utils/image';
-import { useTranslateDictionaryCategoryType } from '@/composables/locale';
+import { onMounted } from 'vue'
+import { useMainStore } from '../stores'
+import { imageUtil } from '@/utils/image'
+import { useTranslateDictionaryCategoryType } from '@/composables/locale'
 
 const store = useMainStore()
 const ttype = (txt: string) => useTranslateDictionaryCategoryType(txt)
@@ -14,7 +14,14 @@ onMounted(() => {
 
 <template>
   <DefaultLayout>
-    <h1 class="text-2xl text-center mb-4 font-bold font-poppins mt-2">Select Categories</h1>
+    <RouterLink
+      :to="{ name: 'home' }"
+      class="text-lg font-semibold mt-2 inline-flex gap-1 items-center"
+    >
+      <VIcon icon="mdi:arrow-left"></VIcon>
+      Back
+    </RouterLink>
+    <h1 class="text-2xl text-center mb-4 font-bold font-poppins">Select Categories</h1>
     <div class="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 place-content-center">
       <template v-for="category in store.categories" :key="category.id">
         <RouterLink :to="{ name: 'dictionary.show', params: { category_type: category.name } }">
