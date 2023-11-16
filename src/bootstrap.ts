@@ -11,5 +11,5 @@ const network = useNetwork()
 if (network.isOnline.value) {
   localeService.sync()
   dictionaryCategoryService.sync()
-  dictionaryService.load()
+  dictionaryService.sync()
 }
