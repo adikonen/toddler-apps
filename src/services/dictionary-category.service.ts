@@ -57,7 +57,6 @@ class DictionaryCategoryService extends BaseService implements MultiLocales {
 
     return [en, id]
   }
-
   async sync() {
     const [en, id] = await this.load()
     this.save(en, localeService.en(this.storeName))
