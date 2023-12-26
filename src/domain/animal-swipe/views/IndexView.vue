@@ -2,7 +2,6 @@
 import { onMounted, watch } from 'vue'
 import { useMainStore } from '@/domain/animal-swipe/stores'
 import VCard from '@/components/VCard.vue'
-import { imageUtil } from '@/utils/image'
 import { useLocaleStore } from '@/stores/locale'
 
 const store = useMainStore()

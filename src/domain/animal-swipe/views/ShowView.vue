@@ -7,8 +7,6 @@ import { useOutlineTextColor } from '@/composables/color'
 import { twMerge } from 'tailwind-merge'
 import { useVoice } from '@/composables/voice'
 import { useLocaleStore } from '@/stores/locale'
-import { imageUtil } from '@/utils/image'
-import { soundUtil } from '@/utils/sound'
 interface ShowView {
   id?: number | string
   category_id: number | string

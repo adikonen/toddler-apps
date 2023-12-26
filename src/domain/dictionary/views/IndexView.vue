@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useMainStore } from '../stores'
-import { imageUtil } from '@/utils/image'
 import { useTranslateDictionaryCategoryType } from '@/composables/locale'
 import type { useLocaleStore } from '@/stores/locale';
 
