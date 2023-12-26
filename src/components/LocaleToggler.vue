@@ -5,6 +5,7 @@ const localeStore = useLocaleStore()
 
 const emit = defineEmits(['changeLocale'])
 
+// on locale changed, then should do given callback
 watch(
   () => localeStore.activeLocaleCode,
   (newv) => {

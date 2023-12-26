@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, watch } from 'vue'
+import { computed, onMounted, reactive, watch, ref } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '../stores'
-import { imageUtil } from '@/utils/image'
 import { useVoice } from '@/composables/voice'
-import { useForceLandscape } from '@/composables/screen'
+import { usePaginate } from '@/composables/paginate'
 import ChevronButtons from '@/components/ChevronButtons.vue'
 import LocaleToggler from '@/components/LocaleToggler.vue'
 
@@ -15,30 +15,36 @@ const props = defineProps<ShowView>()
 
 const store = useMainStore()
 const voice = reactive(useVoice())
-const forceLandscape = useForceLandscape()
 
-const image = computed(() => imageUtil.readBlob(store.activeDictionary))
 
-const handleChangeLocale = () => {
-  store.resetIndex()
-  store.fillDictionaryData(props.category_type)
-}
+const { width } = useWindowSize()
+
+const totalPerData = ref(6)
+const cardPaginate = reactive(usePaginate(store.abcs, totalPerData))
 
 onMounted(async () => {
-  store.fillDictionaryData(props.category_type)
-  store.activeIndex = 0
+  await store.fillCategories()
+  await store.fillDictionaryData(props.category_type)
+  store.initAbc()
+  cardPaginate.source = store.abcs
+  totalPerData.value = width.value > 576 ? store.abcs.length : 6
+  voice.setupVoices()
 })
 
-watch(
-  () => store.activeDictionary,
-  () => {
-    voice.speak(store.activeDictionary.name)
-  }
-)
+const speak = () => {
+  return voice.speak(store.dictionary?.getDetail().name)
+}
+
+watch(() => store.dictionary, () => speak())
+watch(width, (newv) => {
+  // reset
+  cardPaginate.current = 0
+  totalPerData.value = newv > 576 ? store.abcs.length : 6
+}) 
 </script>
 
 <template>
-  <div :class="forceLandscape">
+  <div class="">
     <div class="shadow">
       <div class="p-3 flex justify-between max-w-7xl mx-auto">
         <div>
@@ -51,37 +57,45 @@ watch(
           </RouterLink>
         </div>
         <div>
-          <LocaleToggler @change-locale="handleChangeLocale" />
+          <LocaleToggler @change-locale="speak()"/>
         </div>
       </div>
     </div>
-    <div class="grid grid-cols-2 p-3 gap-4 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 p-3 gap-4 max-w-7xl mx-auto">
       <div>
         <VCard class="relative">
-          <img :src="image" class="duration-400" />
+          <img :src="store.dictionary?.image" class="duration-400 mx-auto h-52" />
           <h3 class="font-poppins text-center text-lg mt-2">
-            {{ store.activeDictionary?.name }}
-          </h3>
+            {{ store.dictionary?.getDetail().name }}
+          </h3> 
           <ChevronButtons
             class="absolute w-[105%] left-[-1rem] top-[40%]"
             :width="40"
-            @next="store.setDictionaryIndexToNext()"
-            @prev="store.setDictionaryIndexToPrev()"
-            :show="store.dictionaryData[store.activeIndex]?.dictionaries.length > 1"
+            @next="store.nextAbcIndex()"
+            @prev="store.prevAbcIndex()"
+            :show="store.dictionaries?.length > 1"
           />
         </VCard>
       </div>
-      <div>
+      <div class="relative h-32 sm:h-fit">
         <div class="grid grid-cols-3 gap-3">
-          <template v-for="(alphabet, index) in store.alphabets">
+          <template v-for="abc in cardPaginate?.active">
             <VCard
-              @click="store.setActiveIndex(index)"
-              :class="['text-xl', { 'bg-gray-700 text-white': index === store.activeIndex }]"
+              @click="store.setAbc(abc)"
+              :class="['text-xl', { 'bg-gray-700 text-white': abc === store.abc }]"
             >
-              {{ alphabet }}
+              {{ abc }}
             </VCard>
+            
           </template>
         </div>
+        <ChevronButtons
+            class="absolute bottom-[-2.6rem] w-[90%] mx-auto left-0 right-0"
+            :width="30"
+            @next="cardPaginate.toNext()"
+            @prev="cardPaginate.toPrev()"
+            :show="width <= 576"
+          />
       </div>
     </div>
   </div>

@@ -6,10 +6,6 @@ import { dictionaryService } from './services/dictionary.service'
 
 createSchema()
 
-const network = useNetwork()
-
-if (network.isOnline.value) {
-  localeService.sync()
-  dictionaryCategoryService.sync()
-  dictionaryService.sync()
-}
+localeService.load()
+dictionaryCategoryService.load()
+dictionaryService.load()

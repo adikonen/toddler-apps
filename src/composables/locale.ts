@@ -11,7 +11,7 @@ export const useTranslateDictionaryCategoryType = function (text: string) {
 
   return computed(() => {
     const code = localeStore.activeLocaleCode
-    const index = en.findIndex((t) => t === text)
+    const index = en.findIndex((t) => t.toLowerCase() === text.toLowerCase())
 
     if (code === 'en-US') {
       return en[index]

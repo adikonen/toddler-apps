@@ -45,6 +45,7 @@ export function useVoice(vpitch = 1, vrate = 1) {
 
   watch(() => localeStore.activeLocaleCode, fillVoice)
 
+
   return {
     text,
     voices,

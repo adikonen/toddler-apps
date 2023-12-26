@@ -26,9 +26,9 @@ watch(() => localeStore.activeLocaleCode, store.fillCategories)
       <template v-for="item in store.categories" :key="item.id">
         <RouterLink :to="{ name: 'animal-swipe.show', params: { category_id: item.id } }">
           <VCard>
-            <img class="h-32 sm:h-56 mx-auto" :src="imageUtil.readBlob(item)" />
+            <img class="h-32 sm:h-56 mx-auto" :src="item.image" />
             <h4 class="text-xl font-semibold text-center justify-self-end">
-              {{ item.name }}
+              {{ item.getDetail().name }}
             </h4>
           </VCard>
         </RouterLink>

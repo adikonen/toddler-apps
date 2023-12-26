@@ -1,3 +1,4 @@
+import { DictionaryCategoryModel } from '@/models/dictionary-category.model'
 import {
   dictionaryCategoryService,
   type DictionaryCategory
@@ -5,125 +6,141 @@ import {
 import { dictionaryService, type Dictionary } from '@/services/dictionary.service'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-
-export type DictionaryData = {
-  alphabet: string
-  dictionaries: Dictionary[]
-}
+import { DictionaryModel } from '@/models/dictionary.model'
 
 export const useMainStore = defineStore('dictionary', () => {
-  const categories = ref<DictionaryCategory[]>([])
-  const dictionaryData = ref<DictionaryData[]>([])
+  // data state
+  const categories = ref<DictionaryCategoryModel[]>([])
+  const dictionaryData = ref<DictionaryModel[]>([])
 
-  // index for array dictionary data
-  const activeIndex = ref(0)
-  const activeDictionaryIndex = ref(0)
+  // interactive state
+  const abc = ref('a') 
+  const abcIndex = ref(0)
 
+  /**
+   * fill categories group by its type
+   * insect, birds, pet -> animal
+   */
   const fillCategories = async () => {
-    const result = await dictionaryCategoryService.getAll()
-    const ctypes: string[] = []
+    const categoryTypes: (string|null)[] = []
+    const filtered = await dictionaryCategoryService.filter<DictionaryCategory>((item) => {
+      const index = categoryTypes.findIndex((type) => type == item.type)
+      if (index !== -1) {
+        return false
+      }
+      categoryTypes.push(item.type)
+      return true
+    })
+    categories.value = filtered.map((item) => new DictionaryCategoryModel({...item}))
+  }
+  
+  /**
+   * @param {string} category_type 
+   * the category_type gained from the router param in the view page
+   * /dictionary/{category_type}/show
+   */
+  const fillDictionaryData = async (category_type: string) => {
+    const map = new Map<number, string>()
+    const filtered = await dictionaryService.filter<Dictionary>((dict) => {
+      let categoryType = map.get(dict.dictionary_category_id)
 
-    const data = result
-      .filter((item) => {
-        const index = ctypes.findIndex((type) => type == item.type)
-        if (index !== -1) {
+      if (categoryType === undefined) {
+        categoryType = categories.value.find((c) => c.type?.toLowerCase() === category_type.toLowerCase())?.type || undefined
+        
+        if (categoryType === undefined) {
           return false
         }
-        ctypes.push(item.type)
-        return true
-      })
-      .map((item) => {
-        return {
-          ...item,
-          name: item.type.toLowerCase()
-        }
-      })
 
-    categories.value = data
+        map.set(dict.dictionary_category_id, categoryType)
+      } 
+      return category_type === categoryType  
+    })
+    dictionaryData.value = filtered.map((item) => new DictionaryModel({...item}))
   }
 
-  const fillDictionaryData = async (type: string) => {
-    const categoryData = await dictionaryCategoryService.filter((c) => {
-      return type.toLowerCase() === c.type.toLowerCase()
-    })
-
-    const categoryIds = categoryData.map((c) => c.id)
-
-    const result = await dictionaryService.filter((d) => {
-      // where dictionary.dictionary_category_id in categoryIds
-      return categoryIds.includes(d.dictionary_category_id)
-    })
-
-    const data: DictionaryData[] = []
-
-    result.forEach((item) => {
-      const obj = {
-        alphabet: item.name[0],
-        dictionaries: [item]
-      }
-
-      const index = data.findIndex((d) => d.alphabet === obj.alphabet)
-
-      if (index !== -1) {
-        data[index].dictionaries.push(item)
-      } else {
-        data.push(obj)
-      }
-    })
-
-    dictionaryData.value = data.sort((a, b) => {
-      return a.alphabet.localeCompare(b.alphabet)
-    })
-
-    console.log(dictionaryData)
+  const initAbc = () => {
+    abc.value = abcs.value[0]
+  }
+  
+  const setAbc = (char: string) => {
+    abc.value = char
+    // reset, cause the other might have less length
+    setAbcIndex(0)
   }
 
-  const setDictionaryIndexToNext = () => {
-    let nextIndex = activeDictionaryIndex.value + 1
-    if (nextIndex >= dictionaryData.value[activeIndex.value].dictionaries.length) {
+  const setAbcIndex = (index: number) => {
+    abcIndex.value = index
+  }
+
+  const nextAbcIndex = () => {
+    let nextIndex = abcIndex.value + 1
+    const length = dictionaries.value.length || 0
+    if (nextIndex >= length) {
       nextIndex = 0
     }
 
-    activeDictionaryIndex.value = nextIndex
+    abcIndex.value = nextIndex
   }
 
-  const setDictionaryIndexToPrev = () => {
-    let nextIndex = activeDictionaryIndex.value - 1
-    if (nextIndex < 0) {
-      nextIndex = dictionaryData.value[activeDictionaryIndex.value].dictionaries.length - 1
+  const prevAbcIndex = () => {
+    let prevIndex = abcIndex.value - 1
+    const length = dictionaries.value.length || 0
+
+    if (prevIndex === -1) {
+      prevIndex = length - 1
     }
 
-    activeDictionaryIndex.value = nextIndex
+    abcIndex.value = prevIndex
   }
 
-  const setActiveIndex = (index: number) => {
-    activeDictionaryIndex.value = 0
-    activeIndex.value = index
-  }
 
-  const resetIndex = () => {
-    activeDictionaryIndex.value = 0
-    activeIndex.value = 0
-  }
+  const dictionaries = computed(() => {
+    return dictionaryData.value.filter((dict) => {
+      // if state abc is 'a' then show dictionaries start with 'a'
+      return dict.defaultDetail().name[0].toLowerCase() === abc.value.toLowerCase()
+    })
+  })
 
-  const alphabets = computed(() => dictionaryData.value.map((d) => d.alphabet))
+  const dictionary = computed(() => {
+    return dictionaries.value[abcIndex.value]
+  })
 
-  const activeDictionary = computed(() => {
-    return dictionaryData.value[activeIndex.value]?.dictionaries[activeDictionaryIndex.value]
+  const abcs = computed(() => {
+    const raw = dictionaryData.value.map((item) => {
+      return item.defaultDetail().name[0]
+    })
+
+    const unique: string[] = []
+
+    raw.forEach((item) => {
+      if (unique.includes(item)) {
+        return
+      }
+
+      unique.push(item)
+    })
+
+    return unique.sort()
   })
 
   return {
+    abc,
     categories,
     dictionaryData,
-    activeDictionaryIndex,
-    activeIndex,
-    setDictionaryIndexToPrev,
-    setDictionaryIndexToNext,
     fillCategories,
     fillDictionaryData,
-    setActiveIndex,
-    resetIndex,
-    alphabets,
-    activeDictionary
+    setAbc,
+    setAbcIndex,
+    nextAbcIndex,
+    prevAbcIndex,
+    initAbc,
+    dictionaries,
+    dictionary,
+    abcs,
+    // fillDictionaryData,
+    // setActiveIndex,
+    // resetIndex,
+    // alphabets,
+    // activeDictionary
   }
 })

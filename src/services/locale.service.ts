@@ -1,14 +1,14 @@
 import { supabase } from '@/utils/supabase'
 import { BaseService } from './base-service'
-import type { HasImage } from '@/types'
-import { imageUtil } from '@/utils/image'
 
 export type LocaleCode = 'en-US' | 'id-ID'
+
 export type Locale = {
-  code: LocaleCode
-  created_at: string
-  name: string
-} & HasImage
+  code: string;
+  created_at: string;
+  image: string;
+  name: string;
+} 
 
 class LocaleService extends BaseService {
   storeName = 'locales'
@@ -21,41 +21,13 @@ class LocaleService extends BaseService {
       return data || []
     }
 
-    const locales = await Promise.all(
-      data.map(async (locale) => {
-        return {
-          ...locale,
-          image_blob: await imageUtil.getBlob(locale.image)
-        }
-      })
-    )
+    console.log(data)
 
-    return locales
+   this.saveResourceToIdb(data)
+
+    return data
   }
 
-  async sync() {
-    this.load().then((locales) => this.save(locales, this.storeName))
-  }
-
-  async getAll(): Promise<Locale[]> {
-    return this.idb.all(this.storeName)
-  }
-
-  async findByPK(code: string) {
-    return this.idb.get<Locale>(this.storeName, code)
-  }
-
-  addSuffixFromCode(text: string, localeCode?: string) {
-    return localeCode === 'id-ID' ? text + '.ID' : text + '.EN'
-  }
-
-  en(text: string) {
-    return this.addSuffixFromCode(text, 'en-US')
-  }
-
-  id(text: string) {
-    return this.addSuffixFromCode(text, 'id-ID')
-  }
 }
 
 export const localeService = new LocaleService()

@@ -1,3 +1,5 @@
+import { DictionaryCategoryModel } from '@/models/dictionary-category.model'
+import { DictionaryModel } from '@/models/dictionary.model'
 import {
   type DictionaryCategory,
   dictionaryCategoryService
@@ -7,18 +9,20 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useMainStore = defineStore('animal-swipe', () => {
-  const categories = ref<DictionaryCategory[]>([])
-  const animals = ref<Dictionary[]>([])
+  const categories = ref<DictionaryCategoryModel[]>([])
+  const animals = ref<DictionaryModel[]>([])
   const activeAnimalIndex = ref(0)
 
   const fillCategories = async () => {
-    categories.value = await dictionaryCategoryService.filter((item) => item.type === 'ANIMAL')
+    const data = await dictionaryCategoryService.filter<DictionaryCategory>((item) => item.type === 'ANIMAL')
+    categories.value = data.map((c) => new DictionaryCategoryModel({...c}))
   }
 
   const fillAnimals = async (category_id: number) => {
-    animals.value = await dictionaryService.filter((item) => {
+    const data = await dictionaryService.filter<Dictionary>((item) => {
       return item.dictionary_category_id == category_id
     })
+    animals.value = data.map((item) => new DictionaryModel({...item})) 
   }
 
   const setIndexToNext = () => {

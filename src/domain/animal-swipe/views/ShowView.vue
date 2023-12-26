@@ -20,14 +20,13 @@ const { category_id } = toRefs(props)
 const store = useMainStore()
 const localeStore = useLocaleStore()
 
-const image = computed(() => imageUtil.readBlob(store.animal))
-const sound = computed(() => soundUtil.readBlob(store.animal))
+const image = computed(() => store.animal?.image)
+const sound = computed(() => store.animal?.sound)
 
 const audio = ref(undefined as unknown as HTMLAudioElement)
 
 const play = () => {
-  voice.speak(store.animal?.name)
-  console.log(sound.value)
+  voice.speak(store.animal?.getDetail().name)
   audio.value.src = sound.value || ''
   setTimeout(() => {
     audio.value.play()
@@ -42,6 +41,7 @@ const setPrev = () => {
   store.setIndexToPrev()
   play()
 }
+
 const voice = reactive(useVoice())
 const forceLandscape = useForceLandscape()
 const bgImage = useBgImage(image)
@@ -61,8 +61,9 @@ onBeforeUnmount(() => {
 watch(
   () => localeStore.activeLocaleCode,
   () => {
+    console.log(store.animal)
     store.fillAnimals(Number(category_id.value)).then(() => {
-      voice.speak(store.animal?.name)
+      voice.speak(store.animal?.getDetail().name)
     })
   }
 )
@@ -92,7 +93,7 @@ watch(
         <p class="text-lg">Back</p>
       </RouterLink>
       <ul class="bg-gray-700 p-3 rounded-bl-md flex gap-4 shadow">
-        <li class="rounded-full p-1 bg-gray-600" @click="voice.speak(store.animal?.name)">
+        <li class="rounded-full p-1 bg-gray-600" @click="voice.speak(store.animal?.getDetail().name)">
           <VIcon icon="heroicons:speaker-wave-solid"></VIcon>
         </li>
         <li
@@ -113,7 +114,7 @@ watch(
     </div>
     <div class="self-center relative bottom-8 flex gap-8 text-white items-center">
       <h1 class="text-3xl self-centerfont-bold font-poppins" :style="outlineText">
-        {{ store.animal?.name }}
+        {{ store.animal?.getDetail().name }}
       </h1>
     </div>
   </div>
