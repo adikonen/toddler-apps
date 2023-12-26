@@ -1,4 +1,3 @@
-import { useIndexedDB } from '@/composables/idb'
 import { DB_NAME, DB_VERSION } from '@/config'
 import { openDB } from 'idb'
 
@@ -63,7 +62,6 @@ export class BaseService {
 
     while (cursor) {
       const mapped = cb(cursor.value)
-      console.log(mapped)
       result.push(mapped)
       cursor = await cursor.continue()
     }

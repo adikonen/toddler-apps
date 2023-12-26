@@ -61,6 +61,10 @@ watch(width, (newv) => {
         </div>
       </div>
     </div>
+    <div v-show="true" class="grid grid-cols-2 px-3 mt-2 text-center">
+      <div class="bg-red-500 p-1">Helo</div>
+      <div class="bg-red-300 p-1">Word</div>
+    </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 p-3 gap-4 max-w-7xl mx-auto">
       <div>
         <VCard class="relative">

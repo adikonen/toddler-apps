@@ -23,6 +23,7 @@ export function useVoice(vpitch = 1, vrate = 1) {
 
   const fillVoice = (locale: string) => {
     voice.value = voices.value.find((item) => item.lang === locale) || voices.value[0]
+    console.log(voice.value)
   }
 
   const setupVoices = () => {
